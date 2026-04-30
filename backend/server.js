@@ -29,7 +29,11 @@ if (process.env.NODE_ENV === 'production') {
   const frontendPath = path.join(__dirname, '../frontend/dist');
   app.use(express.static(frontendPath));
   
-  app.get('/:path*', (req, res) => {
+  // Catch-all: Serve index.html for any request that doesn't match an API route
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
     res.sendFile(path.join(frontendPath, 'index.html'));
   });
 }
