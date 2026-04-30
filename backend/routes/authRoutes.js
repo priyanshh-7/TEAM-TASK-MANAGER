@@ -21,11 +21,11 @@ router.get('/google/callback',
   passport.authenticate('google', { session: false, failureRedirect: '/login' }),
   (req, res) => {
     const token = generateToken(req.user._id);
-    const redirectUrl = process.env.NODE_ENV === 'production' 
-      ? '/' // In production, frontend is served from root
+    const redirectBase = process.env.NODE_ENV === 'production' 
+      ? '' 
       : 'http://localhost:5173';
       
-    res.redirect(`${redirectUrl}/auth/callback?token=${token}`);
+    res.redirect(`${redirectBase}/auth/callback?token=${token}`);
   }
 );
 

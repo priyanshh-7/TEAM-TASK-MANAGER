@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API_URL = import.meta.env.PROD 
-  ? 'https://your-backend-url.up.railway.app/api' // We will replace this with your actual Railway URL
+  ? '/api' 
   : 'http://localhost:5000/api';
 
 const api = axios.create({

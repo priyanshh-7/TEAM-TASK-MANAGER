@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { FiUser, FiMail, FiShield, FiTrash2 } from 'react-icons/fi';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.PROD ? '/api' : 'http://localhost:5000/api';
 
 const Team = () => {
   const [team, setTeam] = useState([]);
