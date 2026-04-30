@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-main: 248 250 252;
+    --bg-surface: 255 255 255;
+    --text-main: 15 23 42;
+    --text-muted: 100 116 139;
+  }
+  
+  :root.dark {
+    --bg-main: 15 23 42;
+    --bg-surface: 30 41 59;
+    --text-main: 248 250 252;
+    --text-muted: 148 163 184;
+  }
+
+  body {
+    @apply bg-background text-textMain font-sans antialiased;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-surface/80 backdrop-blur-md border border-textMain/10;
+  }
+  
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+  }
+}
