@@ -39,7 +39,7 @@ if (process.env.NODE_ENV === 'production' || process.env.RAILWAY_ENVIRONMENT) {
   });
 
   // Catch-all: Serve index.html for any request that doesn't match an API route
-  app.get('*', (req, res) => {
+  app.use((req, res, next) => {
     if (req.path.startsWith('/api')) {
       return res.status(404).json({ message: 'API route not found' });
     }
