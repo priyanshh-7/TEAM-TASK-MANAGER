@@ -21,9 +21,8 @@ router.get('/google/callback',
   passport.authenticate('google', { session: false, failureRedirect: '/login' }),
   (req, res) => {
     const token = generateToken(req.user._id);
-    const redirectBase = process.env.NODE_ENV === 'production' 
-      ? '' 
-      : 'http://localhost:5173';
+    const isProd = process.env.NODE_ENV === 'production' || process.env.RAILWAY_ENVIRONMENT;
+    const redirectBase = isProd ? '' : 'http://localhost:5173';
       
     res.redirect(`${redirectBase}/auth/callback?token=${token}`);
   }
