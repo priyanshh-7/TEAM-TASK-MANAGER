@@ -104,6 +104,20 @@ export const addMemberToProject = createAsyncThunk('project/addMember', async ({
   }
 });
 
+export const deleteProject = createAsyncThunk('project/delete', async (projectId, thunkAPI) => {
+  try {
+    const token = thunkAPI.getState().auth.token;
+    await axios.delete(`${API_URL}/projects/${projectId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    toast.success('Project deleted');
+    return projectId;
+  } catch (error) {
+    toast.error(error.response?.data?.message || 'Failed to delete project');
+    return thunkAPI.rejectWithValue(error.response?.data?.message);
+  }
+});
+
 export const addTaskComment = createAsyncThunk('project/addComment', async ({ taskId, text }, thunkAPI) => {
   try {
     const token = thunkAPI.getState().auth.token;
@@ -152,6 +166,13 @@ const projectSlice = createSlice({
 
       .addCase(createProject.fulfilled, (state, action) => {
         state.projects.push(action.payload);
+      })
+      
+      .addCase(deleteProject.fulfilled, (state, action) => {
+        state.projects = state.projects.filter(p => p._id !== action.payload);
+        if (state.currentProject?._id === action.payload) {
+          state.currentProject = null;
+        }
       })
       
       .addCase(createTask.fulfilled, (state, action) => {

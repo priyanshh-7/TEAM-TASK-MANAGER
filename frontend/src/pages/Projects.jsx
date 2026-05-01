@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchProjects, createProject } from '../store/projectSlice';
+import { fetchProjects, createProject, deleteProject } from '../store/projectSlice';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiPlus, FiFolder, FiUsers } from 'react-icons/fi';
+import { FiPlus, FiFolder, FiUsers, FiTrash2 } from 'react-icons/fi';
 
 const Projects = () => {
   const { user, token } = useSelector((state) => state.auth);
@@ -25,6 +25,14 @@ const Projects = () => {
       setShowModal(false);
       setName('');
       setDescription('');
+    }
+  };
+
+  const handleDelete = async (e, projectId) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (window.confirm('Are you sure you want to delete this project? All associated tasks will also be removed.')) {
+      dispatch(deleteProject(projectId));
     }
   };
 
@@ -53,11 +61,23 @@ const Projects = () => {
             <motion.div 
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
               key={p._id}
+              className="relative group"
             >
               <Link to={`/projects/${p._id}`}>
-                <div className="glass p-6 rounded-2xl h-full border border-textMain/10 hover:border-primary/50 transition-colors group flex flex-col">
-                  <div className="w-12 h-12 rounded-xl bg-surface/50 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <FiFolder className="text-2xl text-primary" />
+                <div className="glass p-6 rounded-2xl h-full border border-textMain/10 hover:border-primary/50 transition-colors flex flex-col">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-surface/50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <FiFolder className="text-2xl text-primary" />
+                    </div>
+                    {user?.role === 'Admin' && (
+                      <button 
+                        onClick={(e) => handleDelete(e, p._id)}
+                        className="p-2 text-textMuted hover:text-danger hover:bg-danger/10 rounded-lg transition-colors"
+                        title="Delete Project"
+                      >
+                        <FiTrash2 />
+                      </button>
+                    )}
                   </div>
                   <h3 className="font-bold text-lg mb-2 textMain">{p.name}</h3>
                   <p className="text-sm text-textMuted flex-1">{p.description}</p>

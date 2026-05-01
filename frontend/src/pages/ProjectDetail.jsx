@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { fetchProjectDetails, createTask, updateTaskStatus, addMemberToProject, deleteProject } from '../store/projectSlice';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchProjectDetails, createTask, updateTaskStatus, addMemberToProject } from '../store/projectSlice';
 import { motion } from 'framer-motion';
-import { FiPlus, FiArrowLeft, FiClock, FiCheckCircle, FiMoreVertical, FiUserPlus } from 'react-icons/fi';
+import { FiPlus, FiArrowLeft, FiClock, FiCheckCircle, FiMoreVertical, FiUserPlus, FiTrash2 } from 'react-icons/fi';
 import { format, parseISO, isPast } from 'date-fns';
 import TaskDrawer from '../components/TaskDrawer';
 
 const ProjectDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { user, token } = useSelector((state) => state.auth);
   const { currentProject, tasks, isLoading } = useSelector((state) => state.project);
   const dispatch = useDispatch();
@@ -69,6 +70,15 @@ const ProjectDetail = () => {
     }
   };
 
+  const handleDeleteProject = async () => {
+    if (window.confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+      const resultAction = await dispatch(deleteProject(id));
+      if (deleteProject.fulfilled.match(resultAction)) {
+        navigate('/projects');
+      }
+    }
+  };
+
   if (isLoading || !currentProject) return <div className="p-8 text-textMuted">Loading project details...</div>;
 
   const columns = ['Todo', 'In Progress', 'Review', 'Done'];
@@ -104,12 +114,21 @@ const ProjectDetail = () => {
         </div>
         <div className="flex flex-wrap items-center gap-3">
           {user?.role === 'Admin' && (
-            <button 
-              onClick={() => setShowMemberModal(true)}
-              className="flex items-center gap-2 bg-surface text-textMain px-4 py-2 rounded-lg hover:bg-surface/80 border border-textMain/10 transition-colors"
-            >
-              <FiUserPlus /> Add Member
-            </button>
+            <>
+              <button 
+                onClick={() => setShowMemberModal(true)}
+                className="flex items-center gap-2 bg-surface text-textMain px-4 py-2 rounded-lg hover:bg-surface/80 border border-textMain/10 transition-colors"
+              >
+                <FiUserPlus /> Add Member
+              </button>
+              <button 
+                onClick={handleDeleteProject}
+                className="flex items-center gap-2 bg-danger/10 text-danger px-4 py-2 rounded-lg hover:bg-danger/20 border border-danger/20 transition-colors"
+                title="Delete Project"
+              >
+                <FiTrash2 /> Delete
+              </button>
+            </>
           )}
           <Link 
             to={`/projects/${id}/member/${user?._id}/progress`}
