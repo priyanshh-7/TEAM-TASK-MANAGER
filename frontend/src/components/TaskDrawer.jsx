@@ -41,7 +41,7 @@ const TaskDrawer = ({ taskId, onClose, columns }) => {
           animate={{ x: 0 }} 
           exit={{ x: '100%' }} 
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className="relative w-full max-w-md bg-background border-l border-textMain/10 shadow-2xl h-full flex flex-col z-10"
+          className="relative w-full sm:max-w-md bg-background border-l border-textMain/10 shadow-2xl h-full flex flex-col z-10"
         >
           {/* Header */}
           <div className="p-6 border-b border-textMain/10 flex items-start justify-between bg-surface/50">

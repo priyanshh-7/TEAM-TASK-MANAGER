@@ -84,7 +84,7 @@ const ProjectDetail = () => {
   const columns = ['Todo', 'In Progress', 'Review', 'Done'];
 
   return (
-    <div className="space-y-6 flex flex-col h-[calc(100vh-80px)]">
+    <div className="space-y-6 flex flex-col min-h-full">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
         <div>
@@ -181,8 +181,8 @@ const ProjectDetail = () => {
       </div>
 
       {activeTab === 'board' ? (
-        <div className="flex-1 overflow-x-auto pb-4">
-          <div className="flex gap-6 min-w-max h-full">
+        <div className="flex-1 overflow-x-auto pb-4 custom-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+          <div className="flex gap-4 md:gap-6 min-w-max h-full">
           {columns.map(status => {
             const colTasks = tasks.filter(t => {
               const matchesStatus = t.status === status;
@@ -192,7 +192,7 @@ const ProjectDetail = () => {
               return matchesStatus;
             });
             return (
-              <div key={status} className="w-80 flex flex-col bg-surface/30 rounded-2xl border border-textMain/10 p-4">
+              <div key={status} className="w-[280px] sm:w-80 flex flex-col bg-surface/30 rounded-2xl border border-textMain/10 p-3 sm:p-4">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-semibold flex items-center gap-2">
                     <span className={`w-2 h-2 rounded-full ${
@@ -272,9 +272,10 @@ const ProjectDetail = () => {
         </div>
       </div>
       ) : (
-        <div className="flex-1 overflow-y-auto space-y-6">
+        <div className="flex-1 space-y-6">
           <div className="glass rounded-2xl overflow-hidden border border-textMain/10">
-            <table className="w-full text-left border-collapse">
+            <div className="overflow-x-auto custom-scrollbar">
+              <table className="w-full text-left border-collapse min-w-[700px]">
               <thead>
                 <tr className="bg-textMain/5 border-b border-textMain/10">
                   <th className="p-4 text-sm font-semibold text-textMuted">Member</th>
@@ -338,7 +339,8 @@ const ProjectDetail = () => {
                   </tr>
                 )}
               </tbody>
-            </table>
+              </table>
+            </div>
           </div>
         </div>
       )}
@@ -357,7 +359,7 @@ const ProjectDetail = () => {
                 <label className="block text-sm text-textMuted mb-1">Description</label>
                 <textarea rows="2" value={description} onChange={e => setDescription(e.target.value)} className="w-full bg-surface border border-textMain/10 rounded-lg p-3 text-textMain focus:outline-none focus:border-primary"></textarea>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm text-textMuted mb-1">Priority</label>
                   <select value={priority} onChange={e => setPriority(e.target.value)} className="w-full bg-surface border border-textMain/10 rounded-lg p-3 text-textMain focus:outline-none focus:border-primary">
@@ -375,7 +377,7 @@ const ProjectDetail = () => {
                     ))}
                   </select>
                 </div>
-                <div>
+                <div className="sm:col-span-2 md:col-span-1">
                   <label className="block text-sm text-textMuted mb-1">Due Date</label>
                   <input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} className="w-full bg-surface border border-textMain/10 rounded-lg p-3 text-textMain focus:outline-none focus:border-primary" />
                 </div>

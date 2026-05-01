@@ -24,120 +24,135 @@ const Layout = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Sidebar */}
+    <div className="min-h-screen bg-background flex overflow-hidden">
+      {/* Sidebar Backdrop for Mobile */}
       <AnimatePresence>
-        {(isSidebarOpen || window.innerWidth > 768) && (
-          <motion.aside 
-            initial={{ x: -250 }}
-            animate={{ x: 0 }}
-            exit={{ x: -250 }}
-            className={`fixed md:sticky top-0 z-40 w-64 h-screen bg-surface border-r border-textMain/10 shadow-2xl flex flex-col transition-transform`}
-          >
-            <div className="p-6 flex items-center justify-between">
-              <h1 className="text-xl font-bold text-gradient flex items-center gap-2">
-                <FiCheckCircle className="text-primary" /> TaskFlow
-              </h1>
-              <button className="md:hidden text-textMuted" onClick={() => setIsSidebarOpen(false)}>
-                <FiX size={24} />
-              </button>
-            </div>
-
-            <nav className="flex-1 px-4 py-6 space-y-2">
-              {navLinks.map((link) => (
-                <NavLink
-                  key={link.name}
-                  to={link.path}
-                  className={({ isActive }) => 
-                    `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                      isActive 
-                        ? 'bg-primary/10 text-primary font-semibold border border-primary/20' 
-                        : 'text-textMuted hover:bg-textMain/5 hover:text-textMain'
-                    }`
-                  }
-                >
-                  <link.icon size={20} />
-                  {link.name}
-                </NavLink>
-              ))}
-            </nav>
-
-            {/* User Profile Summary */}
-            <div className="p-4 m-4 rounded-xl bg-background border border-textMain/10">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white font-bold">
-                  {user?.name?.charAt(0).toUpperCase()}
-                </div>
-                <div className="overflow-hidden">
-                  <p className="text-sm font-semibold truncate text-textMain">{user?.name}</p>
-                  <p className="text-xs text-textMuted truncate">{user?.role}</p>
-                </div>
-              </div>
-              <button 
-                onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-2 py-2 text-sm text-danger hover:bg-danger/10 rounded-lg transition-colors"
-              >
-                <FiLogOut /> Logout
-              </button>
-            </div>
-          </motion.aside>
+        {isSidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsSidebarOpen(false)}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
+          />
         )}
       </AnimatePresence>
 
+      {/* Sidebar */}
+      <aside 
+        className={`fixed md:sticky top-0 left-0 z-50 w-64 h-screen bg-surface border-r border-textMain/10 shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        }`}
+      >
+        <div className="p-6 flex items-center justify-between">
+          <h1 className="text-xl font-bold text-gradient flex items-center gap-2">
+            <FiCheckCircle className="text-primary" /> TaskFlow
+          </h1>
+          <button className="md:hidden text-textMuted p-2 hover:bg-textMain/5 rounded-lg" onClick={() => setIsSidebarOpen(false)}>
+            <FiX size={24} />
+          </button>
+        </div>
+
+        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+          {navLinks.map((link) => (
+            <NavLink
+              key={link.name}
+              to={link.path}
+              onClick={() => {
+                if (window.innerWidth < 768) setIsSidebarOpen(false);
+              }}
+              className={({ isActive }) => 
+                `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                  isActive 
+                    ? 'bg-primary/10 text-primary font-semibold border border-primary/20' 
+                    : 'text-textMuted hover:bg-textMain/5 hover:text-textMain'
+                }`
+              }
+            >
+              <link.icon size={20} />
+              {link.name}
+            </NavLink>
+          ))}
+        </nav>
+
+        {/* User Profile Summary */}
+        <div className="p-4 m-4 rounded-xl bg-background border border-textMain/10">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white font-bold shrink-0">
+              {user?.name?.charAt(0).toUpperCase()}
+            </div>
+            <div className="overflow-hidden">
+              <p className="text-sm font-semibold truncate text-textMain">{user?.name}</p>
+              <p className="text-xs text-textMuted truncate">{user?.role}</p>
+            </div>
+          </div>
+          <button 
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 py-2 text-sm text-danger hover:bg-danger/10 rounded-lg transition-colors font-medium"
+          >
+            <FiLogOut /> Logout
+          </button>
+        </div>
+      </aside>
+
       {/* Main Content */}
-      <main className="flex-1 flex flex-col h-screen overflow-hidden">
+      <main className="flex-1 flex flex-col min-w-0 h-screen">
         {/* Sticky Top Navbar */}
-        <header className="h-16 sticky top-0 z-30 flex items-center justify-between px-6 bg-surface/80 backdrop-blur-md border-b border-textMain/10">
+        <header className="h-16 shrink-0 flex items-center justify-between px-4 md:px-6 bg-surface/80 backdrop-blur-md border-b border-textMain/10 z-30">
           <div className="flex items-center gap-4">
-            <button onClick={() => setIsSidebarOpen(true)} className="md:hidden text-textMain">
+            <button onClick={() => setIsSidebarOpen(true)} className="md:hidden text-textMain p-2 hover:bg-textMain/5 rounded-lg">
               <FiMenu size={24} />
             </button>
-            <div className="hidden md:flex items-center bg-background border border-textMain/10 rounded-full px-4 py-2 w-64 focus-within:border-primary transition-colors">
+            <div className="hidden sm:flex items-center bg-background border border-textMain/10 rounded-full px-4 py-2 w-48 lg:w-64 focus-within:border-primary transition-all">
               <FiSearch className="text-textMuted mr-2" />
               <input type="text" placeholder="Search..." className="bg-transparent text-sm w-full outline-none text-textMain placeholder-textMuted" />
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             <button className="relative p-2 text-textMuted hover:text-textMain transition-colors">
               <FiBell size={20} />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-danger rounded-full"></span>
+              <span className="absolute top-2 right-2 w-2 h-2 bg-danger rounded-full border-2 border-surface"></span>
             </button>
-            <div className="md:hidden w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white font-bold text-sm">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white font-bold text-sm shrink-0">
                 {user?.name?.charAt(0).toUpperCase()}
             </div>
           </div>
         </header>
-        <div className="flex-1 overflow-y-auto flex flex-col relative">
+
+        <div className="flex-1 overflow-y-auto flex flex-col relative custom-scrollbar">
           <div className="flex-1 p-4 md:p-8">
             <Outlet />
           </div>
           
           {/* Footer */}
-          <footer className="w-full py-6 px-4 md:px-8 border-t border-textMain/5 bg-surface/30 mt-auto">
-            <div className="flex flex-col md:flex-row items-center justify-between text-sm text-textMuted">
-              <div className="flex items-center gap-2 mb-4 md:mb-0">
-                <FiCheckCircle className="text-primary" />
-                <span className="font-semibold text-textMain">Team Task Manager</span>
+          <footer className="w-full py-8 px-4 md:px-8 border-t border-textMain/5 bg-surface/30 mt-auto">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-textMuted">
+              <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4 text-center md:text-left">
+                <div className="flex items-center gap-2">
+                  <FiCheckCircle className="text-primary" />
+                  <span className="font-bold text-textMain">TaskFlow</span>
+                </div>
+                <span className="hidden md:inline text-textMain/20">|</span>
                 <span>&copy; {new Date().getFullYear()} All rights reserved.</span>
               </div>
-              <div className="flex gap-6">
+              <div className="flex flex-wrap justify-center gap-4 md:gap-6 font-medium">
                 <button 
                   onClick={() => import('react-hot-toast').then(({ default: toast }) => toast('Privacy Policy coming soon!', { icon: '📄' }))}
                   className="hover:text-primary transition-colors cursor-pointer"
                 >
-                  Privacy Policy
+                  Privacy
                 </button>
                 <button 
                   onClick={() => import('react-hot-toast').then(({ default: toast }) => toast('Terms of Service coming soon!', { icon: '⚖️' }))}
                   className="hover:text-primary transition-colors cursor-pointer"
                 >
-                  Terms of Service
+                  Terms
                 </button>
                 <button 
                   onClick={() => import('react-hot-toast').then(({ default: toast }) => toast('Contact Support coming soon!', { icon: '💬' }))}
                   className="hover:text-primary transition-colors cursor-pointer"
                 >
-                  Contact Support
+                  Support
                 </button>
               </div>
             </div>

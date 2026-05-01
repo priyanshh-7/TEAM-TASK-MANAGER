@@ -95,33 +95,33 @@ const MemberProgressTracker = () => {
       className="p-6 max-w-7xl mx-auto space-y-6"
     >
       {/* Header Profile Section */}
-      <div className="glass rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between shadow-xl gap-4 border border-textMain/10">
-        <div className="flex items-center space-x-4">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white text-2xl font-bold border-2 border-primary">
+      <div className="glass rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between shadow-xl gap-6 border border-textMain/10">
+        <div className="flex items-center space-x-4 w-full sm:w-auto">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white text-2xl font-bold border-2 border-primary shrink-0">
             {(member?.name || 'M').charAt(0).toUpperCase()}
           </div>
-          <div>
-            <h1 className="text-2xl font-bold textMain">{member?.name || 'Member'}</h1>
-            <p className="text-textMuted">{member?.role || 'Team Member'}</p>
+          <div className="min-w-0">
+            <h1 className="text-xl md:text-2xl font-bold textMain truncate">{member?.name || 'Member'}</h1>
+            <p className="text-textMuted truncate">{member?.role || 'Team Member'}</p>
           </div>
         </div>
-        <div className="text-center md:text-right">
-          <p className="text-sm text-textMuted mb-1">Overall Completion</p>
-          <div className="flex items-center space-x-3">
-            <div className="w-48 h-2 bg-surface rounded-full overflow-hidden">
+        <div className="w-full sm:w-auto flex flex-col items-center sm:items-end">
+          <p className="text-xs md:text-sm text-textMuted mb-2 uppercase tracking-wider font-semibold">Overall Completion</p>
+          <div className="flex items-center space-x-3 w-full sm:w-auto">
+            <div className="flex-1 sm:w-48 h-3 bg-surface rounded-full overflow-hidden border border-textMain/5">
               <motion.div 
                 initial={{ width: 0 }}
                 animate={{ width: `${stats?.progressPercentage || 0}%` }}
                 className="h-full bg-gradient-to-r from-primary to-secondary"
               />
             </div>
-            <span className="font-bold textMain">{stats?.progressPercentage || 0}%</span>
+            <span className="font-bold text-lg md:text-xl text-primary">{stats?.progressPercentage || 0}%</span>
           </div>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { title: 'Total Tasks', value: stats?.totalTasks, icon: ListTodo, color: 'text-accent' },
           { title: 'Completed', value: stats?.completedTasks, icon: CheckCircle2, color: 'text-success' },
@@ -129,11 +129,11 @@ const MemberProgressTracker = () => {
           { title: 'Overdue', value: stats?.overdueTasks, icon: AlertCircle, color: 'text-danger' },
         ].map((stat, i) => (
           <div key={i} className="glass rounded-xl p-5 flex items-center space-x-4 border border-textMain/10">
-            <div className={cn("p-3 rounded-lg bg-surface/50", stat.color)}>
+            <div className={cn("p-3 rounded-lg bg-surface/50 shrink-0", stat.color)}>
               <stat.icon size={24} />
             </div>
-            <div>
-              <p className="text-sm text-textMuted">{stat.title}</p>
+            <div className="min-w-0">
+              <p className="text-sm text-textMuted truncate">{stat.title}</p>
               <p className="text-2xl font-bold textMain">{stat.value || 0}</p>
             </div>
           </div>

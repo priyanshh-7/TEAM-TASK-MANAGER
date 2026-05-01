@@ -56,52 +56,54 @@ const Team = () => {
       </div>
 
       <div className="glass rounded-2xl overflow-hidden border border-textMain/10">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-textMain/5 border-b border-textMain/10">
-              <th className="p-4 text-sm font-semibold text-textMuted">Member</th>
-              <th className="p-4 text-sm font-semibold text-textMuted">Role</th>
-              <th className="p-4 text-sm font-semibold text-textMuted">Joined</th>
-              <th className="p-4 text-sm font-semibold text-textMuted text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <tr><td colSpan="4" className="p-4 text-center text-textMuted">Loading...</td></tr>
-            ) : team.map(member => (
-              <tr key={member._id} className="border-b border-textMain/10 hover:bg-textMain/5 transition-colors">
-                <td className="p-4">
-                  <div className="flex items-center gap-3">
-                    {member.avatar ? (
-                      <img src={member.avatar} alt="Avatar" className="w-10 h-10 rounded-full object-cover" />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white font-bold">
-                        {member.name.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                    <div>
-                      <p className="font-semibold text-textMain">{member.name}</p>
-                      <p className="text-sm text-textMuted flex items-center gap-1"><FiMail size={12}/> {member.email}</p>
-                    </div>
-                  </div>
-                </td>
-                <td className="p-4">
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${member.role === 'Admin' ? 'bg-secondary/20 text-secondary' : 'bg-primary/20 text-primary'}`}>
-                    {member.role}
-                  </span>
-                </td>
-                <td className="p-4 text-sm text-textMuted">
-                  {new Date(member.createdAt).toLocaleDateString()}
-                </td>
-                <td className="p-4 text-right">
-                  <button className="p-2 text-danger hover:bg-danger/10 rounded-lg transition-colors">
-                    <FiTrash2 />
-                  </button>
-                </td>
+        <div className="overflow-x-auto custom-scrollbar">
+          <table className="w-full text-left border-collapse min-w-[600px]">
+            <thead>
+              <tr className="bg-textMain/5 border-b border-textMain/10">
+                <th className="p-4 text-sm font-semibold text-textMuted">Member</th>
+                <th className="p-4 text-sm font-semibold text-textMuted">Role</th>
+                <th className="p-4 text-sm font-semibold text-textMuted">Joined</th>
+                <th className="p-4 text-sm font-semibold text-textMuted text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr><td colSpan="4" className="p-4 text-center text-textMuted">Loading...</td></tr>
+              ) : team.map(member => (
+                <tr key={member._id} className="border-b border-textMain/10 hover:bg-textMain/5 transition-colors">
+                  <td className="p-4">
+                    <div className="flex items-center gap-3">
+                      {member.avatar ? (
+                        <img src={member.avatar} alt="Avatar" className="w-10 h-10 rounded-full object-cover shrink-0" />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white font-bold shrink-0">
+                          {member.name.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <div className="min-w-0">
+                        <p className="font-semibold text-textMain truncate">{member.name}</p>
+                        <p className="text-sm text-textMuted flex items-center gap-1 truncate"><FiMail size={12}/> {member.email}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${member.role === 'Admin' ? 'bg-secondary/20 text-secondary' : 'bg-primary/20 text-primary'}`}>
+                      {member.role}
+                    </span>
+                  </td>
+                  <td className="p-4 text-sm text-textMuted">
+                    {new Date(member.createdAt).toLocaleDateString()}
+                  </td>
+                  <td className="p-4 text-right">
+                    <button className="p-2 text-danger hover:bg-danger/10 rounded-lg transition-colors">
+                      <FiTrash2 />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Invite Modal */}
