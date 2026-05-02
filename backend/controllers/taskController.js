@@ -1,5 +1,6 @@
 const Task = require('../models/Task');
 const Project = require('../models/Project');
+const Notification = require('../models/Notification');
 
 exports.createTask = async (req, res) => {
   try {
@@ -26,6 +27,18 @@ exports.createTask = async (req, res) => {
     
     // Populate the assignedTo field before sending it back
     task = await Task.findById(task._id).populate('assignedTo', 'name email avatar');
+    
+    // Send Notification to assigned user
+    if (assignedTo && assignedTo.toString() !== req.user._id.toString()) {
+      await Notification.create({
+        recipient: assignedTo,
+        sender: req.user._id,
+        type: 'TASK_ASSIGNED',
+        title: 'New Task Assigned',
+        message: `You have been assigned a new task: ${title}`,
+        relatedId: task._id
+      });
+    }
     
     res.status(201).json(task);
   } catch (error) {
@@ -109,6 +122,32 @@ exports.addComment = async (req, res) => {
     if (req.user.role === 'Admin' || isAssigned || isMember || isProjectCreator) {
         task.comments.push({ text, user: req.user._id });
         await task.save();
+
+        // Send Notification to assignee (if commenter is not the assignee)
+        if (task.assignedTo && task.assignedTo.toString() !== req.user._id.toString()) {
+          await Notification.create({
+            recipient: task.assignedTo,
+            sender: req.user._id,
+            type: 'COMMENT_ADDED',
+            title: 'New Comment',
+            message: `${req.user.name} commented on task: ${task.title}`,
+            relatedId: task._id
+          });
+        }
+        
+        // Send Notification to task creator (if commenter is not the creator and creator is not the assignee)
+        if (task.createdBy && 
+            task.createdBy.toString() !== req.user._id.toString() && 
+            task.createdBy.toString() !== (task.assignedTo ? task.assignedTo.toString() : '')) {
+          await Notification.create({
+            recipient: task.createdBy,
+            sender: req.user._id,
+            type: 'COMMENT_ADDED',
+            title: 'New Comment',
+            message: `${req.user.name} commented on your task: ${task.title}`,
+            relatedId: task._id
+          });
+        }
         
         const updatedTask = await Task.findById(req.params.id)
             .populate('assignedTo', 'name email avatar')

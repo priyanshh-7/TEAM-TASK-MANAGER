@@ -3,13 +3,25 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { FiHome, FiFolder, FiLogOut, FiMenu, FiX, FiCheckCircle, FiSearch, FiBell, FiSettings, FiUsers } from 'react-icons/fi';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/authSlice';
+import { fetchNotifications } from '../store/notificationSlice';
 import { motion, AnimatePresence } from 'framer-motion';
+import NotificationPanel from './NotificationPanel';
 
 const Layout = () => {
   const { user } = useSelector((state) => state.auth);
+  const { notifications } = useSelector((state) => state.notifications);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = React.useState(false);
+
+  const unreadCount = notifications.filter(n => !n.isRead).length;
+
+  React.useEffect(() => {
+    if (user) {
+      dispatch(fetchNotifications());
+    }
+  }, [dispatch, user]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -108,11 +120,25 @@ const Layout = () => {
               <input type="text" placeholder="Search..." className="bg-transparent text-sm w-full outline-none text-textMain placeholder-textMuted" />
             </div>
           </div>
-          <div className="flex items-center gap-2 md:gap-4">
-            <button className="relative p-2 text-textMuted hover:text-textMain transition-colors">
+          <div className="flex items-center gap-2 md:gap-4 relative">
+            <button 
+              onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+              className={`relative p-2 transition-colors rounded-lg ${isNotificationOpen ? 'text-primary bg-primary/10' : 'text-textMuted hover:text-textMain hover:bg-textMain/5'}`}
+            >
               <FiBell size={20} />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-danger rounded-full border-2 border-surface"></span>
+              {unreadCount > 0 && (
+                <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-danger text-[10px] text-white flex items-center justify-center rounded-full border-2 border-surface font-bold">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
             </button>
+            
+            <AnimatePresence>
+              {isNotificationOpen && (
+                <NotificationPanel onClose={() => setIsNotificationOpen(false)} />
+              )}
+            </AnimatePresence>
+
             <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white font-bold text-sm shrink-0">
                 {user?.name?.charAt(0).toUpperCase()}
             </div>
